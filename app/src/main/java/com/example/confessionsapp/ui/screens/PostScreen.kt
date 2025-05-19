@@ -2,10 +2,12 @@ package com.example.confessionsapp.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
@@ -17,11 +19,12 @@ fun PostScreen() {
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var content by remember { mutableStateOf(TextFieldValue("")) }
 
-    val categories = listOf("Love", "School", "Family", "Humor", "Work")
+    val categories = listOf("Love", "School", "Family", "Humor", "Work", "Dark")
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState()) // Make the column scrollable
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -30,7 +33,7 @@ fun PostScreen() {
             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
         )
 
-        // Category selection via dropdown replacement
+        // Category select
         Text("Select a Category:")
         categories.forEach { category ->
             Row(
@@ -64,6 +67,9 @@ fun PostScreen() {
                 .height(150.dp)
         )
 
+        // Add some bottom padding to ensure buttons are visible
+        Spacer(modifier = Modifier.height(16.dp))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -75,14 +81,9 @@ fun PostScreen() {
                 Text("Submit")
             }
 
-            OutlinedButton(onClick = {
-                // Handle cancel/reset
-                selectedCategory = ""
-                title = TextFieldValue("")
-                content = TextFieldValue("")
-            }) {
-                Text("Cancel")
-            }
         }
+
+        // Extra spacer for better scrolling at the bottom
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
