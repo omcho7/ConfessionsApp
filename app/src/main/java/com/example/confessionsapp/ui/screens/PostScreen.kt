@@ -1,30 +1,30 @@
 package com.example.confessionsapp.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostScreen() {
     var selectedCategory by remember { mutableStateOf("") }
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var content by remember { mutableStateOf(TextFieldValue("")) }
+    var expanded by remember { mutableStateOf(false) }
 
     val categories = listOf("Love", "School", "Family", "Humor", "Work", "Dark")
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()) // Make the column scrollable
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -33,21 +33,43 @@ fun PostScreen() {
             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
         )
 
-        // Category select
+        // Category dropdown
         Text("Select a Category:")
-        categories.forEach { category ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { selectedCategory = category }
-                    .padding(vertical = 4.dp)
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
             ) {
-                RadioButton(
-                    selected = selectedCategory == category,
-                    onClick = { selectedCategory = category }
+                OutlinedTextField(
+                    value = selectedCategory,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                    },
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    placeholder = { Text("Select category") }
                 )
-                Text(text = category)
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    categories.forEach { category ->
+                        DropdownMenuItem(
+                            text = { Text(category) },
+                            onClick = {
+                                selectedCategory = category
+                                expanded = false
+                            }
+                        )
+                    }
+                }
             }
         }
 
@@ -67,7 +89,6 @@ fun PostScreen() {
                 .height(150.dp)
         )
 
-        // Add some bottom padding to ensure buttons are visible
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
@@ -75,15 +96,12 @@ fun PostScreen() {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(onClick = {
-                // Handle submission
                 println("Post Submitted: $selectedCategory, ${title.text}, ${content.text}")
             }) {
                 Text("Submit")
             }
-
         }
 
-        // Extra spacer for better scrolling at the bottom
         Spacer(modifier = Modifier.height(32.dp))
     }
 }
