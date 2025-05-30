@@ -1,7 +1,11 @@
 package com.example.confessionsapp.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "confession")
 data class Confession(
-    val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val category: String,
     val title: String,
     val content: String,
