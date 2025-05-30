@@ -73,10 +73,10 @@ fun RouletteScreen() {
         ) {
             AnimatedVisibility(visible = hasRolled && currentPost != null) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = currentPost?.category ?: "", style = MaterialTheme.typography.titleSmall)
+                    Text(text = /*Fix this part to load category*/ "", style = MaterialTheme.typography.titleSmall)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = currentPost?.content ?: "",
+                        text = currentPost?.body ?: "",
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )

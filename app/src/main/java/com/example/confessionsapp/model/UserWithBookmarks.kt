@@ -1,5 +1,5 @@
 package com.example.confessionsapp.model
-
+/* Functionality from this file was moved to Bookmark
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
@@ -17,3 +17,4 @@ data class UserWithBookmarks(
     )
     val bookmarkedPosts: List<Confession>
 )
+*/

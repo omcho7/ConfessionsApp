@@ -3,7 +3,9 @@ package com.example.confessionsapp.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "advertisement")
+@Entity(
+    tableName = "advertisement"
+)
 data class Advertisement(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val image: String,

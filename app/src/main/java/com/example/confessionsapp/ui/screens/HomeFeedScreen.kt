@@ -1,5 +1,6 @@
 package com.example.confessionsapp.ui.screens
 
+import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -18,11 +19,21 @@ import androidx.compose.ui.unit.dp
 import com.example.confessionsapp.R
 import com.example.confessionsapp.data.ConfessionRepository
 import com.example.confessionsapp.model.Confession
+import com.example.confessionsapp.model.ConfessionCategory
 import com.example.confessionsapp.ui.theme.CategoryBackground
 
 @Composable
 fun HomeFeedScreen() {
-    val categories = listOf("All", "Love", "Family", "School", "Work", "Humor", "Dark")
+    val categories = listOf(
+        "All" to null,
+        "Love" to ConfessionCategory.LOVE,
+        "Family" to ConfessionCategory.FAMILY,
+        "School" to ConfessionCategory.SCHOOL,
+        "Work" to ConfessionCategory.WORK,
+        "Humor" to ConfessionCategory.HUMOR,
+        "Dark" to ConfessionCategory.OTHER // Assuming "Dark" maps to "OTHER"
+    )
+
     val categoryDisplayNames = mapOf(
         "All" to "⭐ All",
         "Love" to "❤️ Love",
@@ -33,10 +44,10 @@ fun HomeFeedScreen() {
         "Dark" to "🖤 Dark"
     )
 
-    var selectedCategory by remember { mutableStateOf("All") }
+    var selectedCategory by remember { mutableStateOf<Pair<String, ConfessionCategory?>>("All" to null) }
 
     val confessions = ConfessionRepository.confessions.filter {
-        selectedCategory == "All" || it.category == selectedCategory
+        selectedCategory.second == null || it.category == selectedCategory.second
     }
 
     Column(
@@ -74,11 +85,13 @@ fun HomeFeedScreen() {
                 .padding(bottom = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            categories.forEach { category ->
+            categories.forEach { (categoryName, categoryEnum) ->
                 FilterChip(
-                    selected = selectedCategory == category,
-                    onClick = { selectedCategory = category },
-                    label = { Text(categoryDisplayNames[category] ?: category) },
+                    selected = selectedCategory.first == categoryName,
+                    onClick = {
+                        selectedCategory = categoryName to categoryEnum
+                    },
+                    label = { Text(categoryDisplayNames[categoryName] ?: categoryName) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                         containerColor = CategoryBackground
@@ -115,12 +128,12 @@ fun ConfessionCard(confession: Confession) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = confession.category,
+                    text = confession.category.name,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = confession.timestamp, // Directly use the string
+                    text = SimpleDateFormat("MMM d, h:mm a").format(confession.createdAt),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -138,7 +151,7 @@ fun ConfessionCard(confession: Confession) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = confession.content,
+                text = confession.body ?: "",
                 style = MaterialTheme.typography.bodyMedium
             )
 
